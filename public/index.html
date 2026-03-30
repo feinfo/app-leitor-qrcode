@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1a1a2e" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <title>Leitor de Produtos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ════════════════════════════════
+       SIDEBAR / MENU LATERAL
+  ════════════════════════════════ -->
+  <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">🛒</div>
+      <div class="sidebar-info">
+        <div class="sidebar-titulo">Leitor de Produtos</div>
+        <div class="sidebar-sub">Mercearia Santarém</div>
+      </div>
+      <button class="btn-fechar-sidebar" id="btn-fechar-sidebar">✕</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item ativo" data-tela="tela-scanner">
+        <span class="nav-icone">📷</span>
+        <span class="nav-label">Ler Produto</span>
+      </button>
+      <button class="nav-item" data-tela="tela-importar">
+        <span class="nav-icone">📥</span>
+        <span class="nav-label">Importar Produtos</span>
+      </button>
+      <button class="nav-item" data-tela="tela-lista">
+        <span class="nav-icone">📋</span>
+        <span class="nav-label">Listar Produtos</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div id="sidebar-status" class="sidebar-status-badge badge-vazio">Nenhuma lista carregada</div>
+    </div>
+  </aside>
+
+  <!-- ════════════════════════════════
+       LAYOUT PRINCIPAL
+  ════════════════════════════════ -->
+  <div class="app-shell">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="btn-menu" id="btn-menu">☰</button>
+      <span class="topbar-titulo" id="topbar-titulo">Ler Produto</span>
+    </header>
+
+    <!-- ── TELA: Scanner ── -->
+    <div id="tela-scanner" class="tela ativa">
+
+      <div class="scanner-container" id="scanner-container">
+        <video id="video" autoplay playsinline muted></video>
+        <div class="scanner-overlay">
+          <div class="scanner-linha"></div>
+          <div class="scanner-canto tl"></div>
+          <div class="scanner-canto tr"></div>
+          <div class="scanner-canto bl"></div>
+          <div class="scanner-canto br"></div>
+        </div>
+        <div class="scanner-dica">Aponte para o código de barras do produto</div>
+      </div>
+      <canvas id="canvas" hidden></canvas>
+
+      <!-- Resultado sucesso -->
+      <div id="resultado" class="resultado hidden">
+        <div class="resultado-icone">✅</div>
+        <div class="resultado-codigo" id="res-codigo"></div>
+        <div class="resultado-nome" id="res-nome"></div>
+        <div class="resultado-preco" id="res-preco"></div>
+        <button class="btn btn-primario" id="btn-escanear-novo">🔄 Escanear Outro</button>
+      </div>
+
+      <!-- Resultado erro -->
+      <div id="resultado-erro" class="resultado-erro hidden">
+        <div class="resultado-icone">❌</div>
+        <div class="resultado-msg" id="res-erro-msg"></div>
+        <button class="btn btn-primario" id="btn-tentar-novo">🔄 Tentar Novamente</button>
+      </div>
+
+      <!-- Estado: sem lista -->
+      <div id="aviso-sem-lista" class="aviso-sem-lista hidden">
+        <div class="aviso-icone">⚠️</div>
+        <p>Nenhuma lista importada.</p>
+        <p class="aviso-sub">Vá em <strong>Importar Produtos</strong> primeiro.</p>
+        <button class="btn btn-primario" id="btn-ir-importar">📥 Importar Agora</button>
+      </div>
+
+    </div>
+
+    <!-- ── TELA: Importar ── -->
+    <div id="tela-importar" class="tela">
+      <div class="page-content">
+        <div id="status-badge" class="badge badge-vazio">Nenhuma lista carregada</div>
+
+        <div class="card">
+          <div class="upload-area" id="upload-area">
+            <div class="upload-icone">�</div>
+            <p class="upload-texto">Toque para selecionar o PDF</p>
+            <p class="upload-sub">Lista exportada pelo PDV</p>
+            <input type="file" id="input-pdf" accept=".pdf" hidden />
+          </div>
+
+          <button class="btn btn-primario" id="btn-importar">📥 Importar PDF</button>
+
+          <div id="progresso" class="progresso hidden">
+            <div class="spinner"></div>
+            <span>Processando PDF...</span>
+          </div>
+
+          <div id="msg-importacao" class="mensagem hidden"></div>
+        </div>
+
+        <button class="btn btn-limpar hidden" id="btn-limpar">🗑️ Limpar Lista de Produtos</button>
+      </div>
+    </div>
+
+    <!-- ── TELA: Listar Produtos ── -->
+    <div id="tela-lista" class="tela">
+      <div class="page-content">
+        <input type="text" id="input-busca" class="input-busca" placeholder="🔍 Buscar por nome ou código..." />
+        <div id="lista-info" class="lista-info"></div>
+        <div id="lista-container" class="lista-container">
+          <div class="lista-vazia">Nenhuma lista carregada ainda.</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /.app-shell -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.19.1/umd/index.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
