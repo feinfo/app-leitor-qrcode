@@ -223,24 +223,51 @@ async function iniciarScanner() {
   inputCodigoManual.value = '';
 
   try {
-    streamAtivo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    video.srcObject = streamAtivo;
-    codeReader = new ZXing.BrowserMultiFormatReader();
-    codeReader.decodeFromVideoElement(video, (result, err) => {
-      if (result) {
-        const codigo = result.getText();
-        pararScanner();
-        buscarProduto(codigo);
+    const hints = new Map();
+    const formats = [
+      ZXing.BarcodeFormat.EAN_13,
+      ZXing.BarcodeFormat.EAN_8,
+      ZXing.BarcodeFormat.CODE_128,
+      ZXing.BarcodeFormat.CODE_39,
+      ZXing.BarcodeFormat.UPC_A,
+      ZXing.BarcodeFormat.UPC_E,
+      ZXing.BarcodeFormat.ITF,
+    ];
+    hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+    hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
+
+    codeReader = new ZXing.BrowserMultiFormatReader(hints);
+
+    // decodeFromConstraints abre a câmera e decodifica — API correta para mobile
+    await codeReader.decodeFromConstraints(
+      { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
+      video,
+      (result, err) => {
+        if (result) {
+          const codigo = result.getText();
+          pararScanner();
+          buscarProduto(codigo);
+        }
+        // err é lançado a cada frame sem leitura — ignorar BarcodeNotFound
+        if (err && !(err instanceof ZXing.NotFoundException)) {
+          console.warn('Scanner err:', err);
+        }
       }
-    });
-  } catch {
+    );
+  } catch (e) {
+    buscaManual.classList.remove('hidden'); // mantém o manual disponível
+    video.classList.add('hidden');
     avisoSemLista.classList.remove('hidden');
     avisoSemLista.querySelector('p').textContent = 'Câmera não disponível ou permissão negada.';
+    console.error('Camera error:', e);
   }
 }
 
 function pararScanner() {
-  if (codeReader) { codeReader.reset(); codeReader = null; }
+  if (codeReader) {
+    codeReader.reset(); // para câmera e stream interno
+    codeReader = null;
+  }
   if (streamAtivo) { streamAtivo.getTracks().forEach(t => t.stop()); streamAtivo = null; }
   buscaManual.classList.add('hidden');
 }
