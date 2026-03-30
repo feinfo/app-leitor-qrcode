@@ -29,6 +29,11 @@ const btnTentarNovo   = document.getElementById('btn-tentar-novo');
 const avisoSemLista   = document.getElementById('aviso-sem-lista');
 const btnIrImportar   = document.getElementById('btn-ir-importar');
 
+// Busca manual
+const buscaManual     = document.getElementById('busca-manual');
+const inputCodigoManual = document.getElementById('input-codigo-manual');
+const btnBuscarCodigo = document.getElementById('btn-buscar-codigo');
+
 // Importar
 const inputPdf        = document.getElementById('input-pdf');
 const uploadArea      = document.getElementById('upload-area');
@@ -195,6 +200,7 @@ async function iniciarScanner() {
   resultado.classList.add('hidden');
   resultadoErro.classList.add('hidden');
   avisoSemLista.classList.add('hidden');
+  buscaManual.classList.add('hidden');
   video.classList.remove('hidden');
 
   // Verifica se tem lista antes de abrir câmera
@@ -211,6 +217,10 @@ async function iniciarScanner() {
     avisoSemLista.classList.remove('hidden');
     return;
   }
+
+  // Mostrar campo de busca manual assim que a câmera iniciar
+  buscaManual.classList.remove('hidden');
+  inputCodigoManual.value = '';
 
   try {
     streamAtivo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
@@ -232,7 +242,20 @@ async function iniciarScanner() {
 function pararScanner() {
   if (codeReader) { codeReader.reset(); codeReader = null; }
   if (streamAtivo) { streamAtivo.getTracks().forEach(t => t.stop()); streamAtivo = null; }
+  buscaManual.classList.add('hidden');
 }
+
+// Busca manual por código digitado
+btnBuscarCodigo.addEventListener('click', () => {
+  const codigo = inputCodigoManual.value.trim();
+  if (!codigo) return;
+  pararScanner();
+  buscarProduto(codigo);
+});
+
+inputCodigoManual.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') btnBuscarCodigo.click();
+});
 
 btnEscanearNovo.addEventListener('click', () => {
   resultado.classList.add('hidden');

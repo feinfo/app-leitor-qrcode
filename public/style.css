@@ -772,3 +772,51 @@ html, body {
   margin-top: 12px;
   max-width: 280px;
 }
+
+/* ── Busca manual ── */
+.busca-manual {
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--borda);
+}
+
+.busca-manual-label {
+  font-size: 0.78rem;
+  color: var(--texto-sub);
+  margin-bottom: 8px;
+}
+
+.busca-manual-row {
+  display: flex;
+  gap: 8px;
+}
+
+.input-codigo {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: var(--texto);
+  font-size: 1rem;
+  font-family: monospace;
+  outline: none;
+}
+
+.input-codigo:focus {
+  border-color: var(--primario);
+}
+
+.btn-buscar-codigo {
+  background: var(--primario);
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-buscar-codigo:hover {
+  background: var(--primario-hover);
+}
